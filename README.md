@@ -2,7 +2,7 @@
 
 A React Native (Expo) app for browsing and joining local experiences — built with TypeScript, Redux Toolkit, RTK Query, and React Navigation.
 
-> Note: the app keeps the original project name `StickerSmash` (app.json / package.json) as requested. The implementation underneath is the Local Experiences app described below.
+
 
 ## Features
 
