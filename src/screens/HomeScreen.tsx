@@ -1,10 +1,10 @@
 import React, { useCallback, useMemo } from 'react';
 import {
   View,
-  FlatList,
   StyleSheet,
   RefreshControl,
 } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -122,7 +122,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <FlatList
+      <FlashList
         data={experiences}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
@@ -144,10 +144,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             colors={[colors.primary]}
           />
         }
-        initialNumToRender={8}
-        maxToRenderPerBatch={8}
-        windowSize={5}
-        removeClippedSubviews
+        estimatedItemSize={280}
       />
     </View>
   );
@@ -163,6 +160,5 @@ const styles = StyleSheet.create({
   listContent: {
     paddingHorizontal: SPACING.lg,
     paddingBottom: SPACING.xxl,
-    flexGrow: 1,
   },
-});
+}); 
