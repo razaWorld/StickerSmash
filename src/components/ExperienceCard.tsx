@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -20,13 +20,26 @@ interface ExperienceCardProps {
 
 const CARD_WIDTH = Dimensions.get('window').width - SPACING.lg * 2;
 
-export const ExperienceCard: React.FC<ExperienceCardProps> = ({
+const ExperienceCardComponent: React.FC<ExperienceCardProps> = ({
   experience,
   onPress,
   variant = 'default',
 }) => {
   const { colors } = useTheme();
   const { isFavorite, toggleFavorite } = useFavorites(experience.id);
+
+  const handleCardPress = useCallback(() => {
+    onPress(experience.id);
+  }, [onPress, experience.id]);
+
+  const handleFavoritePress = useCallback(() => {
+    toggleFavorite(experience.id);
+  }, [toggleFavorite, experience.id]);
+
+  const cardWidth = useMemo(
+    () => (variant === 'compact' ? CARD_WIDTH * 0.75 : CARD_WIDTH),
+    [variant]
+  );
 
   return (
     <TouchableOpacity
@@ -35,21 +48,28 @@ export const ExperienceCard: React.FC<ExperienceCardProps> = ({
         {
           backgroundColor: colors.card,
           shadowColor: colors.shadow,
-          width: variant === 'compact' ? CARD_WIDTH * 0.75 : CARD_WIDTH,
+          width: cardWidth,
         },
       ]}
-      onPress={() => onPress(experience.id)}
+      onPress={handleCardPress}
       activeOpacity={0.9}
     >
       <View style={styles.imageContainer}>
-        <Image source={{ uri: experience.image }} style={styles.image} resizeMode="cover" />
+        <Image
+          source={{ uri: experience.image }}
+          style={styles.image}
+          resizeMode="cover"
+        />
+
         <TouchableOpacity
           style={[styles.favoriteButton, { backgroundColor: colors.surface }]}
-          onPress={() => toggleFavorite(experience.id)}
+          onPress={handleFavoritePress}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          activeOpacity={0.8}
         >
           <Text style={styles.favoriteIcon}>{isFavorite ? '❤️' : '🤍'}</Text>
         </TouchableOpacity>
+
         <View style={[styles.ratingBadge, { backgroundColor: colors.surface }]}>
           <Text style={[styles.ratingText, { color: colors.text }]}>
             ⭐ {formatRating(experience.rating)}
@@ -61,11 +81,13 @@ export const ExperienceCard: React.FC<ExperienceCardProps> = ({
         <Text style={[styles.title, { color: colors.text }]} numberOfLines={2}>
           {experience.title}
         </Text>
+
         <View style={styles.metaRow}>
           <Text style={[styles.meta, { color: colors.textSecondary }]} numberOfLines={1}>
             📍 {experience.location}
           </Text>
         </View>
+
         <Text style={[styles.date, { color: colors.primary }]}>
           📅 {formatDate(experience.date)}
         </Text>
@@ -73,6 +95,8 @@ export const ExperienceCard: React.FC<ExperienceCardProps> = ({
     </TouchableOpacity>
   );
 };
+
+export const ExperienceCard = memo(ExperienceCardComponent);
 
 const styles = StyleSheet.create({
   card: {
